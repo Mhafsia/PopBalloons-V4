@@ -175,10 +175,7 @@ public class WebSocketServer : MonoBehaviour
 
             // Stop the server
             server?.Stop();
-            listenerThread?.Abort();
-
-            Debug.Log("WebSocket Server stopped");
-        }
+            listenerThread?.Abort();}
 
         /// <summary>
         /// Listen for incoming client connections

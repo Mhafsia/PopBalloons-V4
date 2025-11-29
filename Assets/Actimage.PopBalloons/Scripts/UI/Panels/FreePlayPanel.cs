@@ -30,7 +30,6 @@ namespace PopBalloons.UI
         {
             if (instance != null)
             {
-                Debug.LogError("Shouldn't have two instances of FreePlayPanel.");
                 DestroyImmediate(this.gameObject);
                 return;
             }
@@ -47,7 +46,6 @@ namespace PopBalloons.UI
 
             // Check FreePlayPanel GameObject state
             CanvasGroup cg = GetComponent<CanvasGroup>();
-            UnityEngine.Debug.Log($"FreePlayPanel.Start - GameObject active: {gameObject.activeSelf}, CanvasGroup: {(cg != null ? $"alpha={cg.alpha}, interactable={cg.interactable}" : "null")}");
 
             GameManager.OnGameStateChanged += HandleStateChanged;
             GameCreator.OnGameStarted += (type) => { if (type == GameManager.GameType.FREEPLAY) this.HandleNewGame(); };
@@ -74,28 +72,20 @@ namespace PopBalloons.UI
 
         private void HandleStateChanged(GameManager.GameState newState)
         {
-            // UnityEngine.Debug.Log($"FreePlayPanel.HandleStateChanged - New State: {newState}, CurrentGameType: {GameManager.Instance.CurrentGameType}");
-            
             switch (newState)
             {
                 case GameManager.GameState.INIT:
                 case GameManager.GameState.SETUP:
                 case GameManager.GameState.HOME:
                     // Return to setup state and hide InGame panel
-                    UnityEngine.Debug.Log("FreePlayPanel: Returning to SETUP (HOME/INIT/SETUP state)");
                     this.SetState(FreePlaySubState.SETUP);
                     HideInGamePanel();
                     break;
                 case GameManager.GameState.PLAY:
                     if (GameManager.Instance.CurrentGameType == GameManager.GameType.FREEPLAY)
                     {
-                        UnityEngine.Debug.Log("FreePlayPanel: PLAY state detected with FREEPLAY type");
                         // Start FreePlay
                         this.HandleNewGame();
-                    }
-                    else
-                    {
-                        UnityEngine.Debug.Log($"FreePlayPanel: PLAY state but not FREEPLAY type (type={GameManager.Instance.CurrentGameType})");
                     }
                     break;
             }
@@ -103,17 +93,13 @@ namespace PopBalloons.UI
 
         private void HandleNewGame()
         {
-            UnityEngine.Debug.Log($"FreePlayPanel.HandleNewGame - CurrentGameType: {GameManager.Instance.CurrentGameType}, CurrentState: {GameManager.Instance.CurrentState}");
-            
             if (GameManager.Instance.CurrentGameType == GameManager.GameType.NONE || GameManager.Instance.CurrentState != GameManager.GameState.PLAY)
             {
-                UnityEngine.Debug.Log("FreePlayPanel: Setting state to SETUP");
                 this.SetState(FreePlaySubState.SETUP);
             }
             else
             {
                 // FreePlay has no tutorial, go directly to in-game
-                UnityEngine.Debug.Log("FreePlayPanel: Setting state to INGAME");
                 this.SetState(FreePlaySubState.INGAME);
             }
         }

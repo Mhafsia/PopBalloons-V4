@@ -61,7 +61,6 @@ namespace PopBalloons.Utilities
             }
             
             System.Diagnostics.Process.Start(folderPath);
-            Debug.Log($"[FileLogger] Opened folder: {folderPath}");
         }
 
         private void OnDestroy()

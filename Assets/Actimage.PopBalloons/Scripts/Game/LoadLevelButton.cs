@@ -28,42 +28,7 @@ namespace PopBalloons.Utilities
 
         private void Start()
         {
-            // Debug log to confirm setup
-            Debug.Log($"[LoadLevelButton] {gameObject.name} initialized (reads from GameModeSelector)");
-            
-            // UI Configuration Check
-            var rect = GetComponent<RectTransform>();
-            var col = GetComponent<BoxCollider>();
-            
-            string status = $"[UI Check] {gameObject.name} initialized.\n";
-            if (rect != null && col != null)
-            {
-                status += $"   - Rect Size: {rect.rect.width}x{rect.rect.height}\n";
-                status += $"   - Collider Size: {col.size.x}x{col.size.y}x{col.size.z}\n";
-                
-                if (Mathf.Abs(rect.rect.width - col.size.x) > 1f || Mathf.Abs(rect.rect.height - col.size.y) > 1f)
-                {
-                    status += "   - WARNING: Collider size mismatch! Ghost clicks possible.\n";
-                }
-                else
-                {
-                    status += "   - Size OK.\n";
-                }
-            }
-            else
-            {
-                status += "   - MISSING RectTransform or BoxCollider!\n";
-            }
-            Debug.Log(status);
 
-            if (buttonCollider != null)
-            {
-                Debug.Log($"[LoadLevelButton] BoxCollider size: {buttonCollider.size}, isTrigger: {buttonCollider.isTrigger}");
-            }
-            if (touchable != null)
-            {
-                Debug.Log($"[LoadLevelButton] NearInteractionTouchable configured");
-            }
         }
 
         private void Update()
@@ -110,7 +75,6 @@ namespace PopBalloons.Utilities
         {
             if (!enableTouchInteraction)
             {
-                Debug.Log($"[LoadLevelButton] {gameObject.name} - Touch interaction disabled");
                 return;
             }
 
@@ -119,7 +83,6 @@ namespace PopBalloons.Utilities
             if (buttonCollider == null)
             {
                 buttonCollider = gameObject.AddComponent<BoxCollider>();
-                Debug.Log($"[LoadLevelButton] {gameObject.name} - Added BoxCollider");
             }
             
             // Always reconfigure size to ensure proper depth
@@ -131,7 +94,6 @@ namespace PopBalloons.Utilities
                 Vector3 newSize = new Vector3(rectTransform.rect.width, rectTransform.rect.height, depth);
                 buttonCollider.size = newSize;
                 buttonCollider.center = new Vector3(0, 0, depth / 2f); // Center the collider
-                Debug.Log($"[LoadLevelButton] BoxCollider size from RectTransform: {newSize}");
             }
             else
             {
@@ -141,12 +103,10 @@ namespace PopBalloons.Utilities
                     Vector3 size = renderer.bounds.size;
                     if (size.z < 0.01f) size.z = 10f; // Ensure minimum depth
                     buttonCollider.size = size;
-                    Debug.Log($"[LoadLevelButton] BoxCollider size from Renderer: {buttonCollider.size}");
                 }
                 else
                 {
                     buttonCollider.size = new Vector3(0.1f, 0.1f, 10f);
-                    Debug.LogWarning($"[LoadLevelButton] {gameObject.name} - Using default BoxCollider size");
                 }
             }
             
@@ -157,14 +117,12 @@ namespace PopBalloons.Utilities
             if (touchable == null)
             {
                 touchable = gameObject.AddComponent<NearInteractionTouchable>();
-                Debug.Log($"[LoadLevelButton] {gameObject.name} - Added NearInteractionTouchable");
             }
             
             // Important: Set correct orientation for UI elements
             touchable.SetLocalForward(Vector3.forward);
             touchable.SetBounds(buttonCollider.size);
             
-            Debug.Log($"[LoadLevelButton] {gameObject.name} - Touch interaction setup complete");
         }
 
         // MRTK Touch Handlers
@@ -176,7 +134,6 @@ namespace PopBalloons.Utilities
                 return;
             }
             
-            Debug.Log($"[Navigation] Level Button Touched: {gameObject.name}");
             Load();
             eventData.Use();
         }
@@ -193,7 +150,6 @@ namespace PopBalloons.Utilities
                 return;
             }
             
-            Debug.Log($"[Navigation] Level Button Clicked: {gameObject.name}");
             Load();
             eventData.Use();
         }
@@ -207,8 +163,6 @@ namespace PopBalloons.Utilities
             // Read from global GameModeSelector
             var gameType = PopBalloons.UI.GameModeSelector.Instance.CurrentGameType;
             var levelNumber = PopBalloons.UI.GameModeSelector.Instance.CurrentLevelNumber;
-
-            Debug.Log($"[Navigation] Requesting Level Load: Type={gameType}, Level={levelNumber}");
 
             // Update MainPanel state if needed
             if (PopBalloons.UI.MainPanel.Instance != null)

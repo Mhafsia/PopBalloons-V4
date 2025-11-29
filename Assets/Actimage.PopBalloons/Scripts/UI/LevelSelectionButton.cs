@@ -29,7 +29,7 @@ namespace PopBalloons.UI
 
         private void Start()
         {
-            Debug.Log($"[LevelSelectionButton] {gameObject.name} initialized - Level: {levelNumber}");
+
         }
 
         private void Update()
@@ -93,7 +93,6 @@ namespace PopBalloons.UI
                 return;
             }
             
-            Debug.Log($"[LevelSelectionButton] OnTouchStarted - {gameObject.name} touched!");
             SelectLevel();
             eventData.Use();
         }
@@ -110,7 +109,6 @@ namespace PopBalloons.UI
                 return;
             }
             
-            Debug.Log($"[LevelSelectionButton] OnPointerDown - {gameObject.name} clicked!");
             SelectLevel();
             eventData.Use();
         }
@@ -121,7 +119,6 @@ namespace PopBalloons.UI
 
         public void SelectLevel()
         {
-            Debug.Log($"[LevelSelectionButton] SelectLevel() - Setting global level to: {levelNumber}");
             
             // Update global level number
             GameModeSelector.Instance.CurrentLevelNumber = levelNumber;

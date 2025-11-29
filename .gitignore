@@ -25,9 +25,6 @@ _build/
 *.apk
 *.aab
 
-# Test/Session Data
-Assets/SilicoStudio/Experiences/PopBalloons/Data/
-
 # Large binary assets (track only .meta files)
 *.fbx
 *.png
@@ -41,3 +38,21 @@ Assets/SilicoStudio/Experiences/PopBalloons/Data/
 !Packages/manifest.json
 !Packages/packages-lock.json
 !ProjectSettings/*.asset
+
+# TextMesh Pro (auto-generated)
+Assets/TextMesh Pro/
+
+# Web projects (separate repos)
+WebApp/
+tnd-platform-web/
+Workspace Folder/
+
+# Build artifacts
+*.pfx
+MSBuildForUnity.Common.props
+LICENSE
+MODE_LEVEL_SELECTION_GUIDE.md
+
+# Temp scripts
+Assets/TouchableNavigationProx.cs
+Assets/TouchableNavigationProx.cs.meta

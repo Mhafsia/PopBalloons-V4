@@ -100,7 +100,7 @@ namespace PopBalloons.Utilities
 
         private void Update()
         {
-            EndOfLevelMessage.text = $"Bravo ! Tu as réussi le niveau  {currentLevelIndex.ToString()} !";
+            EndOfLevelMessage.text = $"Bravo ! Tu as r�ussi le niveau  {currentLevelIndex.ToString()} !";
             EndOfLevelMessageMotor.text =  EndOfLevelMessage.text;
             //Switch that will handle the 
             switch (currentState)
@@ -132,10 +132,7 @@ namespace PopBalloons.Utilities
         /// <param name="type"></param>
         /// <param name="levelIndex"></param>
         public void NewGame(GameType type, int levelIndex)
-        {
-            Debug.Log($"[Game] Launching Game: Type={type}, Level={levelIndex}");
-            
-            // Synchronize GameModeSelector
+        {// Synchronize GameModeSelector
             if (PopBalloons.UI.GameModeSelector.Instance != null)
             {
                 PopBalloons.UI.GameModeSelector.Instance.CurrentGameType = type;
@@ -145,7 +142,6 @@ namespace PopBalloons.Utilities
             // Validation: ensure GameCreator exists
             if (GameCreator.Instance == null)
             {
-                Debug.LogError("GameManager: Cannot start new game - GameCreator.Instance is null!");
                 this.currentState = GameState.HOME;  // Reset state to prevent further issues
                 return;
             }
@@ -157,7 +153,6 @@ namespace PopBalloons.Utilities
 
             if(currentState == GameState.PLAY)
             {
-                Debug.Log("GameManager: Stopping current game before starting new one");
                 // Save current level score before quitting
                 Save();
                 TimerManager.LevelEnd();
@@ -180,7 +175,6 @@ namespace PopBalloons.Utilities
                     PopBalloons.UI.MainPanel.Instance.SetState(PopBalloons.UI.MainPanelState.COGNITIVE);
                     break;
                 case GameType.FREEPLAY:
-                    UnityEngine.Debug.Log("GameManager: Setting MainPanel to FREEPLAY");
                     PopBalloons.UI.MainPanel.Instance.SetState(PopBalloons.UI.MainPanelState.FREEPLAY);
                     break;
             }
@@ -220,9 +214,8 @@ namespace PopBalloons.Utilities
         /// <summary>
         /// Will display home menu scene or specified state
         /// </summary>
-        public void Home(PopBalloons.UI.MainPanelState nextState = PopBalloons.UI.MainPanelState.MODE_PICK)
+        public void Home(PopBalloons.UI.MainPanelState? nextState = null)
         {
-            Debug.Log($"[GameManager] Home() called. Stopping game and going to {nextState}");
             
             bool wasPlaying = (currentState == GameState.PLAY);
             
@@ -244,11 +237,12 @@ namespace PopBalloons.Utilities
             this.currentGameType = GameType.NONE;  // Ensure it's NONE even if not in PLAY state
             this.currentLevelIndex = 0;
             
-            // Update UI state
-            if (PopBalloons.UI.MainPanel.Instance != null)
-            {
-                PopBalloons.UI.MainPanel.Instance.SetState(nextState);
+            // Update UI state ONLY if explicitly requested
+            if (nextState.HasValue && PopBalloons.UI.MainPanel.Instance != null)
+            {PopBalloons.UI.MainPanel.Instance.SetState(nextState.Value);
             }
+            else
+            {}
             
             OnGameStateChanged?.Invoke(this.currentState);
             //We remove unwanted scene because off additing loading
@@ -277,16 +271,10 @@ namespace PopBalloons.Utilities
         /// <param name="SceneName"></param>
         public void UnloadAllScenes()
         {
-            int c = SceneManager.sceneCount;
-            Debug.Log($"[GameManager] Unloading scenes. Total count: {c}");
-            for (int i = 0; i < c; i++)
+            int c = SceneManager.sceneCount;for (int i = 0; i < c; i++)
             {
-                Scene scene = SceneManager.GetSceneAt(i);
-                Debug.Log($"[GameManager] Checking scene: {scene.name}");
-                if (scene.name != "Setup")
-                {
-                    Debug.Log($"[GameManager] Unloading async: {scene.name}");
-                    SceneManager.UnloadSceneAsync(scene);
+                Scene scene = SceneManager.GetSceneAt(i);if (scene.name != "Setup")
+                {SceneManager.UnloadSceneAsync(scene);
                 }
 
             }

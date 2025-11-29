@@ -1,4 +1,4 @@
-﻿using Microsoft.MixedReality.Toolkit.UI;
+using Microsoft.MixedReality.Toolkit.UI;
 using PopBalloons.Boundaries;
 using PopBalloons.Configuration;
 using PopBalloons.Utilities;
@@ -126,9 +126,7 @@ namespace PopBalloons.UI
         }
         
         public override void SetState(MainPanelState newState)
-        {
-            Debug.Log($"[UI] Panel State Changed: {currentState} -> {newState}");
-            base.SetState(newState);
+        {base.SetState(newState);
         }
         #endregion
 

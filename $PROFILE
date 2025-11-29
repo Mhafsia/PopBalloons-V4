@@ -1,0 +1,9 @@
+﻿
+# my profile.ps1
+function prompt {
+    # Your non-prompt logic here
+    $prompt = Write-Prompt "Text before posh-git prompt " -ForegroundColor ([ConsoleColor]::Green)
+    $prompt += & $GitPromptScriptBlock
+    $prompt += Write-Prompt "Text after posh-git prompt" -ForegroundColor ([ConsoleColor]::Magenta)
+    if ($prompt) { "$prompt " } else { " " }
+}

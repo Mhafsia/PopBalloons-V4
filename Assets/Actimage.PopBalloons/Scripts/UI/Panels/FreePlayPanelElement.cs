@@ -16,10 +16,6 @@ namespace PopBalloons.UI
             {
                 FreePlayPanel.Instance.OnStateChanged += this.HandleChange;
             }
-            else
-            {
-                UnityEngine.Debug.LogWarning($"FreePlayPanelElement on {gameObject.name} FAILED to subscribe - FreePlayPanel.Instance is null!");
-            }
         }
 
         protected override void UnSubscribe()

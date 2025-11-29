@@ -202,7 +202,6 @@ namespace PopBalloons.Data
                 // LoadDatas();
                 InitDatas();
                 
-                Debug.Log($"DataManager: Recording initialized for profile {folderName}");
             }
             else
             {

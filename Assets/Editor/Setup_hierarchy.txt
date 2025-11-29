@@ -1,0 +1,401 @@
+﻿Scene: Setup
+- EyeCalibrationChecker (Missing Prefab)
+- MixedRealityToolkit
+- MainPanel
+  - FixContent
+    - Panel
+    - Header
+      - MainTitle
+        - Text (TMP)
+      - Cognitive Title
+        - Text (TMP)
+        - Image
+          - Mode_Icon
+          - Image
+      - Motricity Title
+        - Text (TMP)
+        - Image
+          - Mode_Icon
+          - Image
+      - FreePlay Title
+        - Text (TMP)
+        - Image
+          - Mode_Icon
+          - Image
+  - Profile
+    - Selection
+      - Anchors
+        - Options - Standard
+        - Options - Selected
+        - Existing - Standard
+        - Existing - Selected
+        - Title - Standard
+        - Title - Selected
+        - ScrollView - Standard
+        - ScrollView - Selected
+      - Options
+        - PlayAsGuest
+          - Image
+          - Text (TMP)
+        - AddProfile
+          - Image
+          - Text (TMP)
+      - Existing
+        - Title
+        - No_Profile_Yet
+          - Label
+          - Image
+        - Scroll View
+          - Viewport
+            - Content
+              - Profile_Item(Clone)
+                - Profile_avatar
+                  - Balloon
+                  - Eye
+                  - Accessories
+                    - Accessory
+                    - Accessory (1)
+                    - Accessory (2)
+                    - Accessory (3)
+                - Profile_name
+                - Edit
+              - Profile_Item(Clone)
+                - Profile_avatar
+                  - Balloon
+                  - Eye
+                  - Accessories
+                    - Accessory
+                    - Accessory (1)
+                    - Accessory (2)
+                    - Accessory (3)
+                - Profile_name
+                - Edit
+          - Scrollbar Horizontal
+            - Sliding Area
+              - Handle
+      - Back_Button
+    - Edition
+      - Anchors
+        - Initial
+        - Final
+      - Back_Button
+      - Options
+        - Options
+          - Avatar
+            - Balloon
+            - Eye
+            - Accessories
+              - Accessory
+              - Accessory (1)
+              - Accessory (2)
+              - Accessory (3)
+          - TopMenu
+            - ColorButton(Clone)
+              - Image
+            - ColorButton(Clone)
+              - Image
+            - ColorButton(Clone)
+              - Image
+            - ColorButton(Clone)
+              - Image
+          - LeftMenu
+            - EyeButton(Clone)
+              - Image
+            - EyeButton(Clone)
+              - Image
+            - EyeButton(Clone)
+              - Image
+            - EyeButton(Clone)
+              - Image
+          - RightMenu
+            - AccessoryButton(Clone)
+              - Image
+            - AccessoryButton(Clone)
+              - Image
+            - AccessoryButton(Clone)
+              - Image
+            - AccessoryButton(Clone)
+              - Image
+          - BottomMenu
+            - UserName
+              - Text Area
+                - UserName Input Caret
+                - Placeholder
+                - Text
+            - DeleteButton
+              - Text
+            - QuestionDialogUI
+              - Background
+              - Text
+              - YesBtn
+                - Background
+                - Text
+              - NoBtn
+                - Background
+                - Text
+      - Next
+        - Text (TMP)
+    - Suivant
+      - Text (TMP)
+  - Mode_Selection
+    - Back_Button
+    - Header
+    - Modes
+      - FreePlay
+        - Button
+          - Image
+          - Text (TMP)
+        - Text (TMP)
+      - Cognitif
+        - Button
+          - Image
+          - Text (TMP)
+        - Text (TMP)
+      - Motricity
+        - Button
+          - Image
+          - Text (TMP)
+        - Text (TMP)
+  - Cognitive
+    - Configuration
+      - Back_Button
+      - Content
+        - Levels
+          - Header
+            - Text (TMP)
+          - Details
+            - Level_Icon
+            - Level_Name
+            - Level_Desc
+          - Footer
+            - LevelButton(Clone)
+              - Background
+              - Text (TMP)
+            - LevelButton(Clone)
+              - Background
+              - Text (TMP)
+            - LevelButton(Clone)
+              - Background
+              - Text (TMP)
+            - LevelButton(Clone)
+              - Background
+              - Text (TMP)
+            - LevelButton(Clone)
+              - Background
+              - Text (TMP)
+            - LevelButton(Clone)
+              - Background
+              - Text (TMP)
+            - LevelButton(Clone)
+              - Background
+              - Text (TMP)
+        - Separator
+        - Tutorial
+          - Header
+            - Text (TMP)
+          - Button
+            - TODO:SingleImage
+            - Yellow
+            - Blue
+          - Description
+      - Play
+        - Text (TMP)
+    - Game
+      - InGame
+        - Content
+          - Header
+            - Image
+              - Score
+                - ScoreConfetti
+          - Back_Button
+          - Score
+            - ScoreItemFilling
+              - Balloon
+                - Fill
+              - Score
+              - Timer
+                - Text
+      - EndGame
+        - Background
+        - Content
+          - Header
+            - EndLevelMessage
+          - Back_Button
+          - Score
+            - ScoreItem_Happy
+              - Image
+              - Header
+            - Plus
+            - ScoreItem_Sad
+              - Image
+              - Label
+            - Equal
+            - Total
+              - Image
+              - Header
+        - Next
+          - Text (TMP)
+    - Tutorial
+      - Tutorial
+        - Text (TMP)
+      - TutorialEnd
+        - Background
+        - Image
+        - Text (TMP)
+        - Next
+          - Text (TMP)
+        - Back_Button
+  - Motricity
+    - Configuration
+      - Back_Button
+      - Content
+        - Levels
+          - Header
+            - Text (TMP)
+          - Details
+            - Level_Icon
+            - Level_Name
+            - Level_Desc
+          - Footer
+            - LevelButton(Clone)
+              - Background
+              - Text (TMP)
+            - LevelButton(Clone)
+              - Background
+              - Text (TMP)
+            - LevelButton(Clone)
+              - Background
+              - Text (TMP)
+            - LevelButton(Clone)
+              - Background
+              - Text (TMP)
+        - Separator
+        - Tutorial
+          - Header
+            - Text (TMP)
+          - Button
+            - TODO:SingleImage
+            - Yellow
+            - Blue
+          - Description
+      - Play
+        - Text (TMP)
+    - Game
+      - InGame
+        - Back_Button
+        - FixContent
+          - Header
+            - Image
+              - Score
+                - ScoreConfetti
+          - Timer
+            - Text
+          - Ballons
+            - BalloonFiled1
+              - ConfettiUI
+            - BalloonFiled2
+              - ConfettiUI
+            - BalloonFiled3
+              - ConfettiUI
+            - BalloonFiled4
+              - ConfettiUI
+            - BalloonFiled5
+              - ConfettiUI
+            - StarFiled
+              - ConfettiUI
+            - BalloonLines
+      - EndGame
+        - Background
+          - EndLevelMessageMotor
+        - TimeScores
+          - Time1
+          - Score1
+          - Time2
+          - Score2
+          - Time3
+          - Score3
+          - Time4
+          - Score4
+          - Time5
+          - Score5
+          - Time6
+          - Score6
+        - Next
+          - Text (TMP)
+    - Tutorial
+      - Tutorial
+        - Text (TMP)
+      - TutorialEnd
+        - Background
+        - Image
+        - Text (TMP)
+        - Next
+          - Text (TMP)
+        - Back_Button
+  - FreePlay
+    - Configuration
+      - Content
+        - Text (TMP)
+      - Play
+        - Text (TMP)
+      - Back_Button
+    - Game
+      - FixContent
+        - Header
+          - Image
+      - InGame
+        - Back_Button
+        - StatsDisplay
+- Directional Light
+- Debug-Window (Missing Prefab)
+  - DebugMessage
+- HandTracking
+  - Hands
+    - Right
+      - Thumb
+      - Index
+      - Middle-Finger
+      - Ring-Finger
+      - Pinky
+    - Left
+      - Thumb
+      - Index
+      - Middle-Finger
+      - Ring-Finger
+      - Pinky
+  - VirtualHand
+  - VirtualHand2
+    - pencil
+      - Finger_Pointing (1)
+      - CFX_Magical_Source
+        - Waves
+        - Points
+      - Finger1
+      - Finger_Pointing (1)
+- SceneElement
+  - Floor
+  - Left
+  - Right
+  - Top
+  - Front
+  - Back
+- MixedRealityPlayspace
+  - Main Camera
+    - SolverHandler Target on Main Camera with offset (0,0, 0,0, 0,0), (0,0, 0,0, 0,0)
+  - Diagnostics
+  - DefaultCursor(Clone)
+    - Anchor_Cursor
+      - CursorVisual
+        - CursorPress
+        - CursorRest
+        - CursorFocus
+        - CursorMoveArrowsEastWest
+        - CursorMoveArrowsMove
+          - CursorMoveArrowsMove
+        - CursorMoveArrowsNortheastSouthwest
+        - CursorMoveArrowsNorthSouth
+        - CursorMoveArrowsNorthwestSoutheast
+        - CursorRotateArrowsHorizontal
+        - CursorRotateArrowsVertical
+- WebSocketServer
+- UIRaycastCamera

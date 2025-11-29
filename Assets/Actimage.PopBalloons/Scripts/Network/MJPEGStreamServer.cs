@@ -116,7 +116,6 @@ namespace PopBalloons.Network
                 listenerThread.Join(1000);
             }
 
-            Debug.Log("MJPEG Stream Server stopped");
         }
 
         /// <summary>

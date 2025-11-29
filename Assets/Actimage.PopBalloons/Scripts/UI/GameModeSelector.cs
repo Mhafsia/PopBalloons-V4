@@ -36,9 +36,7 @@ namespace PopBalloons.UI
             get => _currentGameType;
             set
             {
-                _currentGameType = value;
-                Debug.Log($"[GameModeSelector] Mode mis à jour: {value}");
-            }
+                _currentGameType = value;}
         }
 
         public int CurrentLevelNumber
@@ -46,9 +44,7 @@ namespace PopBalloons.UI
             get => _currentLevelNumber;
             set
             {
-                _currentLevelNumber = value;
-                Debug.Log($"[GameModeSelector] Niveau mis à jour: {value}");
-            }
+                _currentLevelNumber = value;}
         }
 
         private void Awake()
@@ -70,8 +66,6 @@ namespace PopBalloons.UI
         public void Reset()
         {
             CurrentGameType = GameManager.GameType.COGNITIVE;
-            CurrentLevelNumber = 0;
-            Debug.Log("[GameModeSelector] Reset to default values");
-        }
+            CurrentLevelNumber = 0;}
     }
 }

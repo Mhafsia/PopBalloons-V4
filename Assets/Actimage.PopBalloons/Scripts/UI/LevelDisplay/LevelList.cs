@@ -1,4 +1,4 @@
-﻿using PopBalloons.Configuration;
+using PopBalloons.Configuration;
 using PopBalloons.Utilities;
 using System.Collections;
 using System.Collections.Generic;
@@ -83,7 +83,6 @@ namespace PopBalloons.UI
             {
                 GameModeSelector.Instance.CurrentGameType = level.Type;
                 GameModeSelector.Instance.CurrentLevelNumber = level.GameIndex;
-                Debug.Log($"[LevelList] Select() - Synchronized GameModeSelector: Type={level.Type}, Level={level.GameIndex}");
             }
 
             //We refresh level item status

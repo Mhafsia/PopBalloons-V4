@@ -43,7 +43,6 @@ namespace PopBalloons.DebugTools
                     var levelNumber = (int)levelNumberField.GetValue(button);
                     
                     string path = GetGameObjectPath(button.gameObject);
-                    UnityEngine.Debug.Log($"[{i}] {button.gameObject.name} | Type: {gameType} | Level: {levelNumber} | Path: {path}");
                 }
                 else
                 {

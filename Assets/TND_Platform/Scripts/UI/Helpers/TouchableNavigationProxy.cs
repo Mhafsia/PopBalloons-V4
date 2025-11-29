@@ -73,19 +73,16 @@ namespace TNDPlatform.UI.Helpers
 
             if (triggerNavigationBack)
             {
-                if (verbose) Debug.Log($"[TouchableNavigationProxy] GoBack sur '{gameObject.name}'");
                 Managers.NavigationManager.Instance.GoBack();
             }
 
             if (!string.IsNullOrEmpty(navigateToPage))
             {
-                if (verbose) Debug.Log($"[TouchableNavigationProxy] NavigateTo('{navigateToPage}') depuis '{gameObject.name}'");
                 Managers.NavigationManager.Instance.NavigateTo(navigateToPage);
             }
 
             if (targetButton != null)
             {
-                if (verbose) Debug.Log($"[TouchableNavigationProxy] Invoke Button.onClick sur '{targetButton.name}'");
                 targetButton.onClick.Invoke();
             }
         }

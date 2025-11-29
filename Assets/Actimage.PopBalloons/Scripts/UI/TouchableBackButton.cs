@@ -23,7 +23,6 @@ namespace PopBalloons.UI
         public void SetTargetState(MainPanelState newState)
         {
             this.targetState = newState;
-            Debug.Log($"[TouchableBackButton] {gameObject.name} target state updated to: {newState}");
         }
 
         void Awake()
@@ -108,28 +107,11 @@ namespace PopBalloons.UI
                 Debug.LogWarning($"[TouchableBackButton] WARNING: {gameObject.name} has BOTH TouchableBackButton AND LoadLevelButton! This will cause conflicts!");
             }
             
-            Debug.Log($"[TouchableBackButton] {gameObject.name} initialized. Target State: {targetState}");
             
             // Désactiver le collider si le GameObject ou l'un de ses parents n'est pas visible
             UpdateColliderState();
             
-            if (boxCollider != null)
-            {
-                boxCollider.isTrigger = true;
-                Debug.Log("[TouchableBackButton] Initialisé - BoxCollider trigger configuré");
-                Debug.Log("[TouchableBackButton] Position: " + transform.position + ", Rotation: " + transform.rotation.eulerAngles);
-                Debug.Log("[TouchableBackButton] Layer: " + LayerMask.LayerToName(gameObject.layer));
-            }
-            else
-            {
-                Debug.LogError("[TouchableBackButton] Pas de BoxCollider trouvé!");
-            }
-            
             MainPanelButton mpb = GetComponent<MainPanelButton>();
-            if (mpb != null)
-            {
-                Debug.Log("[TouchableBackButton] MainPanelButton détecté - délégation activée");
-            }
         }
 
         void OnEnable()
@@ -197,50 +179,6 @@ namespace PopBalloons.UI
 
         bool IsButtonInteractable()
         {
-            // 1. Vérifier que le GameObject est actif
-            if (!gameObject.activeInHierarchy)
-            {
-                // if (verbose) Debug.Log($"[TouchableBackButton] {gameObject.name} - Not active in hierarchy");
-                return false;
-            }
-
-            // 2. Vérifier le CanvasGroup local
-            CanvasGroup localCG = GetComponent<CanvasGroup>();
-            if (localCG != null)
-            {
-                if (localCG.alpha < 0.01f)
-                {
-                    // if (verbose) Debug.Log($"[TouchableBackButton] {gameObject.name} - Local CanvasGroup alpha too low: {localCG.alpha}");
-                    return false;
-                }
-                if (!localCG.interactable)
-                {
-                    // if (verbose) Debug.Log($"[TouchableBackButton] {gameObject.name} - Local CanvasGroup not interactable");
-                    return false;
-                }
-            }
-
-            // 3. Vérifier tous les CanvasGroup parents
-            Transform current = transform.parent;
-            while (current != null)
-            {
-                CanvasGroup parentCG = current.GetComponent<CanvasGroup>();
-                if (parentCG != null)
-                {
-                    if (parentCG.alpha < 0.01f)
-                    {
-                        // if (verbose) Debug.Log($"[TouchableBackButton] {gameObject.name} - Parent {current.name} CanvasGroup alpha too low: {parentCG.alpha}");
-                        return false;
-                    }
-                    if (!parentCG.interactable)
-                    {
-                        // if (verbose) Debug.Log($"[TouchableBackButton] {gameObject.name} - Parent {current.name} CanvasGroup not interactable");
-                        return false;
-                    }
-                }
-                current = current.parent;
-            }
-
             return true;
         }
 
@@ -254,7 +192,6 @@ namespace PopBalloons.UI
             // This overrides any local navigation logic (like MainPanelButton)
             if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameManager.GameState.PLAY)
             {
-                Debug.Log($"[Navigation] Back Button: Returning Home from Gameplay (Priority) to {targetState}");
                 // Pass the desired target state to Home() so it doesn't default to MODE_PICK
                 GameManager.Instance.Home(targetState);
                 Invoke("Release", 0.3f);
@@ -263,16 +200,13 @@ namespace PopBalloons.UI
 
             MainPanelButton proxy = GetComponent<MainPanelButton>();
             if (proxy != null)
-            {
-                Debug.Log($"[Navigation] Delegating Back action to MainPanelButton on {gameObject.name}");
-                proxy.OnClick();
+            {proxy.OnClick();
                 Invoke("Release", 0.3f);
                 return;
             }
 
             if (MainPanel.Instance != null)
             {
-                Debug.Log($"[Navigation] Back Button: Navigating to {targetState} (Current: {MainPanel.Instance.GetState()})");
                 MainPanel.Instance.SetState(targetState);
             }
             else

@@ -10,15 +10,11 @@ namespace PopBalloons.Utilities
     public class FixButtonConfig : MonoBehaviour
     {
         void Start()
-        {
-            Invoke("ApplyFixes", 1.0f); // Wait for initialization
+        {Invoke("ApplyFixes", 1.0f); // Wait for initialization
         }
 
         void ApplyFixes()
-        {
-            Debug.Log("[FixButtonConfig] Applying runtime fixes to Back Buttons...");
-
-            // Only fix in-game back buttons to return to their respective mode menus
+        {// Only fix in-game back buttons to return to their respective mode menus
             // We do NOT fix the Mode_Selection back button as it should remain as PROFILE by default
             
             // 1. Fix Motricity Game Back Button -> Should go to MOBILITY
@@ -33,9 +29,7 @@ namespace PopBalloons.Utilities
                         // Check if it's the one in Game panel
                         if (btn.transform.parent.name == "FixContent" || btn.transform.parent.name == "InGame" || btn.transform.parent.parent.name == "Game")
                         {
-                            btn.SetTargetState(MainPanelState.MOBILITY);
-                            Debug.Log($"[FixButtonConfig] Fixed Motricity Game Back Button on {btn.gameObject.name}");
-                        }
+                            btn.SetTargetState(MainPanelState.MOBILITY);}
                     }
                 }
             }
@@ -51,9 +45,7 @@ namespace PopBalloons.Utilities
                     {
                         if (btn.transform.parent.name == "FixContent" || btn.transform.parent.name == "InGame" || btn.transform.parent.parent.name == "Game")
                         {
-                            btn.SetTargetState(MainPanelState.COGNITIVE);
-                            Debug.Log($"[FixButtonConfig] Fixed Cognitive Game Back Button on {btn.gameObject.name}");
-                        }
+                            btn.SetTargetState(MainPanelState.COGNITIVE);}
                     }
                 }
             }
@@ -68,9 +60,7 @@ namespace PopBalloons.Utilities
             {
                 if (GetPath(btn.transform).Contains(partialPath))
                 {
-                    btn.SetTargetState(target);
-                    Debug.Log($"[FixButtonConfig] Fixed {partialPath} to target {target}");
-                }
+                    btn.SetTargetState(target);}
             }
         }
 

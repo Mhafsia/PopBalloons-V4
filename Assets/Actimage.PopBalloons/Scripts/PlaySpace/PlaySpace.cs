@@ -451,7 +451,6 @@ namespace PopBalloons.Boundaries
 #else
                 position.y = -1.7f;
 #endif
-                Debug.Log("Floor not found");
             }
             this.InitPlaySpace();
             this.transform.position = position;
@@ -550,17 +549,10 @@ namespace PopBalloons.Boundaries
                 // This assumes user is standing normally - works regardless of their actual height
                 float cameraY = Camera.main.transform.position.y;
                 floorHeight = cameraY - standardEyeHeight;
-                Debug.Log($"Floor not detected after {maxFloorDetectionTime}s. Using standard eye height method: Floor at {floorHeight.Value:F2}m (Camera: {cameraY:F2}m - Standard Eye Height: {standardEyeHeight:F2}m)");
-            }
-            else
-            {
-                float detectionTime = Time.time - startTime;
-                Debug.Log($"Floor detected in {detectionTime:F2} seconds at height: {floorHeight.Value:F2}m");
             }
             
             //We wait a few seconds in order to prevent issues
             yield return new WaitForSeconds(Mathf.Max(0, waitTime - (Time.time - startTime)));
-            //TODO: Hide floor detection info
             DetectFloor();
         }
 

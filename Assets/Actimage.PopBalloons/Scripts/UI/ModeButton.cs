@@ -30,30 +30,7 @@ namespace PopBalloons.UI
 
         private void Start()
         {
-            // UI Configuration Check
-            var rect = GetComponent<RectTransform>();
-            var col = GetComponent<BoxCollider>();
-            
-            string status = $"[UI Check] {gameObject.name} initialized.\n";
-            if (rect != null && col != null)
-            {
-                status += $"   - Rect Size: {rect.rect.width}x{rect.rect.height}\n";
-                status += $"   - Collider Size: {col.size.x}x{col.size.y}x{col.size.z}\n";
-                
-                if (Mathf.Abs(rect.rect.width - col.size.x) > 1f || Mathf.Abs(rect.rect.height - col.size.y) > 1f)
-                {
-                    status += "   - WARNING: Collider size mismatch! Ghost clicks possible.\n";
-                }
-                else
-                {
-                    status += "   - Size OK.\n";
-                }
-            }
-            else
-            {
-                status += "   - MISSING RectTransform or BoxCollider!\n";
-            }
-            Debug.Log(status);
+
         }
 
 
@@ -138,10 +115,7 @@ namespace PopBalloons.UI
             if (!IsButtonVisible())
             {
                 return;
-            }
-            
-            Debug.Log($"[Navigation] Mode Button Touched: {gameType}");
-            SelectMode();
+            }SelectMode();
             eventData.Use();
         }
 
@@ -154,10 +128,7 @@ namespace PopBalloons.UI
             if (!IsButtonVisible())
             {
                 return;
-            }
-            
-            Debug.Log($"[Navigation] Mode Button Clicked: {gameType}");
-            SelectMode();
+            }SelectMode();
             eventData.Use();
         }
 
