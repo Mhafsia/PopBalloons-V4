@@ -26,6 +26,9 @@ namespace PopBalloons.UI
 
         private bool animationToggler = false;
         private Billboard billboard;
+        
+        // Flag to ensure panel only auto-positions on first app start
+        private bool firstHomeEntry = true;
 
         /// <summary>
         /// Singleton instance accessor
@@ -92,14 +95,17 @@ namespace PopBalloons.UI
                     // Always show MainPanel when returning home
                     this.gameObject.SetActive(true);
                     
-                    // REMOVED: this.SetState(MainPanelState.MODE_PICK); 
-                    // GameManager.Home() now sets the correct state (e.g. MOBILITY or MODE_PICK)
-                    // We shouldn't override it here.
+                    // Only move panel to front on FIRST entry (App Start)
+                    // On subsequent returns (e.g. Back button), keep it where it is
+                    if (firstHomeEntry)
+                    {
+                        //Place in front of user (~2 meters)
+                        Vector3 target = Camera.main.transform.position + Camera.main.transform.forward*2.0f;
+                        target.y = this.transform.position.y;
+                        StartCoroutine(MovePanel(target, 2f * target - Camera.main.transform.position));
+                        firstHomeEntry = false;
+                    }
                     
-                    //Place in front of user (~2 meters)
-                    Vector3 target = Camera.main.transform.position + Camera.main.transform.forward*2.0f;
-                    target.y = this.transform.position.y;
-                    StartCoroutine(MovePanel(target, 2f * target - Camera.main.transform.position));
                     billboard.enabled = true;
                     break;
                 case GameManager.GameState.PLAY:
@@ -126,7 +132,8 @@ namespace PopBalloons.UI
         }
         
         public override void SetState(MainPanelState newState)
-        {base.SetState(newState);
+        {
+            base.SetState(newState);
         }
         #endregion
 

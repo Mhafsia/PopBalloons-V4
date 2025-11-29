@@ -427,10 +427,12 @@ namespace PopBalloons.Utilities
             BalloonBehaviour balloon = Instantiate(prefab, pos, rot);
             
             // Add DirectionIndicator for MOBILITY mode to show arrows pointing to off-screen balloons
+            /* TEMPORARILY DISABLED TO FIX CRASH
             if (GameManager.Instance.CurrentGameType == GameManager.GameType.MOBILITY)
             {
                 balloon.gameObject.AddComponent<DirectionIndicator>();
             }
+            */
             
             Options balloonOptions = new Options();
                 balloonOptions.id = balloon.GetInstanceID();

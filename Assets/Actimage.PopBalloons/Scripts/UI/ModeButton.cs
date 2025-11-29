@@ -79,20 +79,24 @@ namespace PopBalloons.UI
             if (!enableTouchInteraction) return;
 
             // Setup BoxCollider
+            // Setup BoxCollider
             buttonCollider = GetComponent<BoxCollider>();
+            
+            // Only configure size if we had to add the collider ourselves
+            // This preserves manually configured colliders in the Inspector
             if (buttonCollider == null)
             {
                 buttonCollider = gameObject.AddComponent<BoxCollider>();
-            }
-            
-            RectTransform rectTransform = GetComponent<RectTransform>();
-            if (rectTransform != null)
-            {
-                buttonCollider.size = new Vector3(rectTransform.rect.width, rectTransform.rect.height, 0.1f);
-            }
-            else
-            {
-                buttonCollider.size = new Vector3(0.1f, 0.1f, 0.1f);
+                
+                RectTransform rectTransform = GetComponent<RectTransform>();
+                if (rectTransform != null)
+                {
+                    buttonCollider.size = new Vector3(rectTransform.rect.width, rectTransform.rect.height, 0.1f);
+                }
+                else
+                {
+                    buttonCollider.size = new Vector3(0.1f, 0.1f, 0.1f);
+                }
             }
             
             buttonCollider.isTrigger = true;
