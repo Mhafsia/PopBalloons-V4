@@ -1,4 +1,4 @@
-﻿using PopBalloons;
+using PopBalloons;
 using PopBalloons.Boundaries;
 using System;
 using System.Collections;
@@ -51,10 +51,15 @@ namespace PopBalloons.Utilities
         private Animator julie;
         private Camera player;
         private JulieState currentState = JulieState.NONE;
+        private Vector3 initialSpawnPosition; // Store where Julie first appeared
+        
+        // Track goodbye sequence to handle re-entrance
+        private Coroutine goodbyeCoroutine = null;
+        private bool shouldRespawnAfterGoodbye = false;
 
 
         public enum JulieState {NONE,INIT,WALKING,READY}
-        public enum JulieAnimation {Dance,Clap,Sad,Angry,Defeat,Jump,Pop,Point_Left,Point_Right,Point_Middle,Setup_Motricity,Demonstrate_Motricity,Disappear, Setup_Cognitive, Demonstrate_Cognitive};
+        public enum JulieAnimation {Dance,Clap,Sad,Angry,Defeat,Jump,Pop,Point_Left,Point_Right,Point_Middle,Setup_Motricity,Demonstrate_Motricity,Disappear,Setup_Cognitive,Demonstrate_Cognitive,Salute};
 
         /// <summary>
         /// Singleton instance
@@ -81,20 +86,275 @@ namespace PopBalloons.Utilities
                 instance = this;
             }
         }
+        
+        private void Start()
+        {
+            // Subscribe to MainPanel state changes to detect when leaving Cognitive mode
+            if (PopBalloons.UI.MainPanel.Instance != null)
+            {
+                PopBalloons.UI.MainPanel.Instance.Subscribe(HandleMainPanelStateChanged);
+            }
+        }
+        
+        private void OnDestroy()
+        {
+            GameManager.OnGameStateChanged -= HandleGameStateChanged;
+            if (PopBalloons.UI.MainPanel.Instance != null)
+            {
+                PopBalloons.UI.MainPanel.Instance.UnSubscribe(HandleMainPanelStateChanged);
+            }
+        }
+        
+        private PopBalloons.UI.MainPanelState lastPanelState = PopBalloons.UI.MainPanelState.PROFILE;
+        
+        /// <summary>
+        /// Handles MainPanel state changes to dismiss Julie when leaving Cognitive mode
+        /// </summary>
+        private void HandleMainPanelStateChanged(PopBalloons.UI.MainPanelState newPanelState)
+        {
+            // If we're ENTERING COGNITIVE mode - spawn Julie at her position
+            if (newPanelState == PopBalloons.UI.MainPanelState.COGNITIVE && 
+                lastPanelState != PopBalloons.UI.MainPanelState.COGNITIVE)
+            {
+                // Check if goodbye sequence is running
+                if (goodbyeCoroutine != null)
+                {
+                    // User re-entered Cognitive mode during goodbye - let goodbye finish then respawn
+                    shouldRespawnAfterGoodbye = true;
+                }
+                else
+                {
+                    // Normal spawn
+                    SpawnJulieAtStart();
+                }
+            }
+            // If we're leaving COGNITIVE mode to go to another mode
+            else if (lastPanelState == PopBalloons.UI.MainPanelState.COGNITIVE && 
+                newPanelState != PopBalloons.UI.MainPanelState.COGNITIVE)
+            {
+                DismissJulie();
+            }
+            
+            lastPanelState = newPanelState;
+        }
 
         private void HandleGameStateChanged(GameManager.GameState newState)
         {
             if (newState == GameManager.GameState.PLAY && GameManager.Instance.CurrentGameType == GameManager.GameType.COGNITIVE)
             {
-                this.Init();
+                // Game is starting - Julie walks towards player (she's already spawned from panel change)
+                WalkJulieToPlayer();
             }
             else if (newState == GameManager.GameState.HOME)
             {
-                currentState = JulieState.INIT;
-                if (julie != default && (currentState == JulieState.WALKING || currentState == JulieState.READY))
+                // Game ended or user went back - Julie should move to the side to avoid blocking the screen
+                if (julie != default && PlaySpace.Instance != null)
                 {
-                    this.Play(JulieAnimation.Disappear);
+                    // Stop any ongoing walking animation
+                    StopAllCoroutines();
+                    
+                    // IMPORTANT: Stop the walking animation properly
+                    if (julie.GetBool("isWalking"))
+                    {
+                        julie.SetBool("isWalking", false);
+                    }
+                    
+                    // If Julie is currently walking or ready (i.e., visible and active)
+                    if (currentState == JulieState.WALKING || currentState == JulieState.READY)
+                    {
+                        // Move Julie to the side (right) so she doesn't block the UI panel
+                        if (Camera.main != null)
+                        {
+                            Vector3 playerPos = Camera.main.transform.position;
+                            Vector3 playerForward = Camera.main.transform.forward;
+                            Vector3 playerRight = Camera.main.transform.right; // Right direction
+                            
+                            // Position: 1.5m forward + 1m to the right, at Julie's Y level
+                            Vector3 sidePosition = playerPos + playerForward * 1.5f + playerRight * 1.0f;
+                            sidePosition.y = julie.transform.parent.position.y;
+                            
+                            destination = sidePosition;
+                            julie.transform.parent.LookAt(new Vector3(destination.x, julie.transform.parent.position.y, destination.z), Vector3.up);
+                            
+                            // Walk to side position smoothly
+                            WalkToward(destination);
+                            currentState = JulieState.WALKING;
+                        }
+                        else
+                        {
+                            // Fallback to corner if camera not available
+                            AreaSegment segment = PlaySpace.Instance.GetFacingSegment();
+                            GameObject center = PlaySpace.Instance.GetCenter();
+                            Vector3 cornerPosition = segment.V2.transform.position + (segment.V2.transform.position - center.transform.position).normalized * 0.5f;
+                            cornerPosition.y = julie.transform.parent.position.y;
+                            
+                            destination = cornerPosition;
+                            julie.transform.parent.LookAt(new Vector3(destination.x, julie.transform.parent.position.y, destination.z), Vector3.up);
+                            WalkToward(destination);
+                            currentState = JulieState.WALKING;
+                        }
+                    }
+                    
+                    // Reset state for next game
+                    currentState = JulieState.INIT;
                 }
+            }
+        }
+        
+        /// <summary>
+        /// Spawns Julie at her initial position when Cognitive mode is selected
+        /// She appears but doesn't walk towards player yet
+        /// </summary>
+        private void SpawnJulieAtStart()
+        {
+            // If Julie doesn't exist, create her
+            if (julie == default)
+            {
+                currentState = JulieState.INIT;
+                julie = Instantiate(juliePrefab, this.transform).GetComponentInChildren<Animator>();
+                
+                if (PlaySpace.Instance)
+                {
+                    // Play appearing animation
+                    julie.Play("Julie@Appearing");
+                    
+                    // Position Julie at a segment edge
+                    AreaSegment segment = PlaySpace.Instance.GetFacingSegment();
+                    GameObject center = PlaySpace.Instance.GetCenter();
+                    julie.transform.parent.position = segment.V1.transform.position + (segment.V1.transform.position - center.transform.position).normalized * 0.5f;
+                    
+                    // Save this position so Julie can return here when dismissed
+                    initialSpawnPosition = julie.transform.parent.position;
+                    
+                    currentState = JulieState.READY;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Makes Julie walk towards the player (called when game starts)
+        /// </summary>
+        private void WalkJulieToPlayer()
+        {
+            if (julie == default || PlaySpace.Instance == null)
+            {
+                return;
+            }
+            
+            // Calculate destination 1.5m in front of the player
+            if (Camera.main != null)
+            {
+                Vector3 playerPos = Camera.main.transform.position;
+                Vector3 playerForward = Camera.main.transform.forward;
+                
+                // Position 1.5 meters in front of player (1m + 50cm extra), at Julie's Y level
+                destination = playerPos + playerForward * 1.5f;
+                destination.y = julie.transform.parent.position.y;
+                
+                julie.transform.parent.LookAt(new Vector3(destination.x, julie.transform.parent.position.y, destination.z), Vector3.up);
+                Invoke("WalkTowardDestination", 0.5f);
+                currentState = JulieState.WALKING;
+            }
+        }
+        
+        /// <summary>
+        /// Called when completely leaving Cognitive mode (e.g., going to another game mode)
+        /// This makes Julie walk back to spawn, wave goodbye, then disappear
+        /// </summary>
+        public void DismissJulie()
+        {
+            if (julie != default && goodbyeCoroutine == null)
+            {
+                StopAllCoroutines();
+                
+                // Stop walking animation
+                if (julie.GetBool("isWalking"))
+                {
+                    julie.SetBool("isWalking", false);
+                }
+                
+                // Reset respawn flag and start goodbye sequence
+                shouldRespawnAfterGoodbye = false;
+                goodbyeCoroutine = StartCoroutine(GoodbyeSequence());
+            }
+        }
+        
+        /// <summary>
+        /// Coroutine that orchestrates Julie's goodbye: walk to spawn → salute with disappear effect
+        /// </summary>
+        private System.Collections.IEnumerator GoodbyeSequence()
+        {
+            // Step 1: Walk back to spawn position
+            destination = initialSpawnPosition;
+            julie.transform.parent.LookAt(new Vector3(destination.x, julie.transform.parent.position.y, destination.z), Vector3.up);
+            
+            // Start walking manually instead of using WalkToward to avoid coroutine conflicts
+            julie.SetBool("isWalking", true);
+            currentState = JulieState.WALKING;
+            
+            // Wait until Julie reaches the spawn position (or timeout after 10 seconds)
+            float timeout = 10f;
+            float elapsed = 0f;
+            while (Vector3.Distance(julie.transform.parent.position, destination) > 0.2f && elapsed < timeout)
+            {
+                // Move Julie towards destination
+                Vector3 initialDirection = (destination - julie.transform.parent.position).normalized;
+                Vector3 offset = initialDirection * Time.deltaTime * speed;
+                
+                if (offset.sqrMagnitude > (destination - julie.transform.parent.position).sqrMagnitude)
+                {
+                    julie.transform.parent.position = destination;
+                    break;
+                }
+                
+                julie.transform.parent.position += offset;
+                julie.transform.parent.rotation = Quaternion.Slerp(
+                    julie.transform.parent.rotation, 
+                    Quaternion.LookRotation(new Vector3(destination.x, julie.transform.parent.position.y, destination.z) - julie.transform.parent.position, Vector3.up), 
+                    0.1f
+                );
+                
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+            
+            // Stop walking
+            julie.SetBool("isWalking", false);
+            currentState = JulieState.READY;
+            
+            // Step 2: Play Salute animation
+            julie.SetTrigger("Salute");
+            
+            // Wait for Salute to play (not too long to avoid double salute)
+            yield return new WaitForSeconds(2f);
+            
+            // Step 3: Play Disappear
+            this.Play(JulieAnimation.Disappear);
+            
+            // Wait for Disappear to finish
+            yield return new WaitForSeconds(4f);
+            
+            currentState = JulieState.NONE;
+            DestroyJulie();
+            
+            // Clear goodbye coroutine reference
+            goodbyeCoroutine = null;
+            
+            // Check if we should respawn (user re-entered Cognitive during goodbye)
+            if (shouldRespawnAfterGoodbye)
+            {
+                shouldRespawnAfterGoodbye = false;
+                SpawnJulieAtStart();
+            }
+        }
+        
+        private void DestroyJulie()
+        {
+            if (julie != default)
+            {
+                Destroy(julie.transform.parent.gameObject);
+                julie = null;
+                currentState = JulieState.NONE;
             }
         }
 
@@ -106,38 +366,12 @@ namespace PopBalloons.Utilities
                 return;
             }
 
-            //Test
-            //if (Input.GetKeyDown(KeyCode.Space))
-            //{
-            //    StartCoroutine(Walk(GetPathToBestAngle()));
-            //}
-
-            //Check for tolerance
-            //if (julie.GetBool("isWalking"))
-            //{
-            //    if (Vector3.Dot(target.forward.normalized, (julie.transform.parent.position - target.position).normalized)> focusTolerance)
-            //    {
-            //        StopAllCoroutines();
-            //        julie.SetBool("isWalking", false);
-            //    }
-
-            //}
-
             //Gaze at player at all time for now
             if (!julie.GetBool("isWalking"))
             {
                 Vector3 center = PlaySpace.Instance.GetCenter().transform.position;
                 julie.transform.parent.rotation = Quaternion.Slerp(julie.transform.parent.rotation, Quaternion.LookRotation(new Vector3(center.x, julie.transform.parent.position.y, center.z) - julie.transform.parent.position, Vector3.up), 0.1f);
             }
-                //WalkAround for now
-                //if (!julie.GetBool("isWalking"))
-                //{
-                //    List<Vector3> steps = new List<Vector3>();
-                //    PlaySpace.Instance.landmarks.ForEach((landmark) => { steps.Add(landmark.transform.position); });
-
-
-                //    StartCoroutine(Walk(steps.ToArray()));
-                //}
 
             if (autoFollow && target != null)
             {
@@ -152,8 +386,6 @@ namespace PopBalloons.Utilities
                     target = Camera.main.transform;
                 }
             }
-            
-           
         }
 
         #endregion

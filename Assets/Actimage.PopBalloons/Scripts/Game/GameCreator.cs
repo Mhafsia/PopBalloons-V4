@@ -426,6 +426,12 @@ namespace PopBalloons.Utilities
 
             BalloonBehaviour balloon = Instantiate(prefab, pos, rot);
             
+            // Add DirectionIndicator for MOBILITY mode to show arrows pointing to off-screen balloons
+            if (GameManager.Instance.CurrentGameType == GameManager.GameType.MOBILITY)
+            {
+                balloon.gameObject.AddComponent<DirectionIndicator>();
+            }
+            
             Options balloonOptions = new Options();
                 balloonOptions.id = balloon.GetInstanceID();
                 balloonOptions.color = balloon.GetColor().ToString();
@@ -556,9 +562,7 @@ namespace PopBalloons.Utilities
         /// Will abort current level status
         /// </summary>
         public void QuitLevel()
-        {
-            Debug.Log("[GameCreator] QuitLevel called. Stopping all coroutines and resetting state.");
-            
+        {            
             // Stop the game loop FIRST to prevent any new spawns
             GameIsRunning = false;
             
